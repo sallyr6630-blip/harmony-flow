@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Eye Care Training — Harmony Flow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Noto+Serif+JP:wght@200;300;400&family=Noto+Serif+Arabic:wght@300;400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -24,12 +27,15 @@
       min-height: 100vh;
       background: radial-gradient(ellipse 120% 80% at 50% 0%, #0e1e30 0%, #060a12 65%);
       color: var(--text);
-      font-family: 'Segoe UI', -apple-system, 'Noto Sans JP', 'Noto Sans', sans-serif;
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', 'Noto Serif Arabic', serif;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-    body.rtl { direction: rtl; }
+    body.rtl {
+      direction: rtl;
+      font-family: 'Noto Serif Arabic', 'Cormorant Garamond', serif;
+    }
 
     /* ── HEADER ── */
     header {
@@ -43,16 +49,20 @@
     }
 
     .title-block h1 {
-      font-size: 1.55rem;
-      font-weight: 300;
-      letter-spacing: 0.06em;
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: 1.85rem;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: 0.04em;
       color: var(--primary);
     }
     .title-block p {
-      font-size: 0.82rem;
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: 0.92rem;
+      font-weight: 300;
       color: var(--muted);
       margin-top: 5px;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
     }
 
     /* ── LANGUAGE BUTTONS ── */
@@ -131,10 +141,12 @@
     .ex-card.active { display: flex; }
 
     .ex-label {
-      font-size: .78rem;
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: .82rem;
+      font-weight: 400;
+      font-style: italic;
       color: var(--muted);
-      letter-spacing: .12em;
-      text-transform: uppercase;
+      letter-spacing: .14em;
       text-align: center;
     }
 
@@ -219,8 +231,11 @@
     }
 
     .phase-badge {
-      font-size: .95rem;
-      letter-spacing: .08em;
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: .07em;
       color: var(--secondary);
       min-height: 28px;
       text-align: center;
@@ -335,7 +350,10 @@
     }
 
     .blink-word {
-      font-size: 1.1rem;
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', 'Noto Serif Arabic', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      font-style: italic;
       letter-spacing: .12em;
       color: var(--primary);
       opacity: .4;
@@ -391,16 +409,19 @@
       gap: 3px;
     }
     .timer-label {
-      font-size: .7rem;
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: .78rem;
+      font-style: italic;
       color: var(--muted);
       letter-spacing: .07em;
     }
     .elapsed {
-      font-size: 1.45rem;
-      font-weight: 200;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 300;
       color: var(--primary);
-      letter-spacing: .1em;
-      min-width: 58px;
+      letter-spacing: .12em;
+      min-width: 60px;
       text-align: center;
     }
 
