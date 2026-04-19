@@ -150,6 +150,31 @@
       justify-content: center;
     }
 
+    /* ── INSTRUCTION ROW (2-column pill layout for ex-0) ── */
+    .instr-row {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 520px;
+      flex-wrap: wrap;
+    }
+    .instr-item {
+      flex: 1;
+      min-width: 180px;
+      background: rgba(126,200,227,.05);
+      border: 1px solid rgba(126,200,227,.12);
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: .85rem;
+      color: var(--text);
+      line-height: 1.6;
+      text-align: center;
+    }
+    .instr-item strong { color: var(--primary); font-weight: 600; }
+
     /* ── EXERCISE 1 : DISTANCE ── */
     .dist-arena {
       width: 280px;
@@ -359,6 +384,17 @@
       box-shadow: 0 4px 22px rgba(90,72,114,.35);
     }
 
+    .timer-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .timer-label {
+      font-size: .7rem;
+      color: var(--muted);
+      letter-spacing: .07em;
+    }
     .elapsed {
       font-size: 1.45rem;
       font-weight: 200;
@@ -422,7 +458,10 @@
       <div class="dist-orb" id="dist-orb"></div>
     </div>
     <div class="phase-badge" id="phase-badge">&nbsp;</div>
-    <div class="instr" id="instr-0"></div>
+    <div class="instr-row" id="instr-0">
+      <div class="instr-item" id="instr-0a"></div>
+      <div class="instr-item" id="instr-0b"></div>
+    </div>
   </div>
 
   <!-- ── CARD 1 : Eye movement ── -->
@@ -458,7 +497,10 @@
   <!-- CONTROLS -->
   <div class="controls">
     <button class="start-btn" id="start-btn"></button>
-    <div class="elapsed" id="elapsed">0:00</div>
+    <div class="timer-wrap">
+      <div class="timer-label" id="timer-label"></div>
+      <div class="elapsed" id="elapsed">1:00</div>
+    </div>
   </div>
 </main>
 
@@ -478,7 +520,9 @@ const T = {
     lbl2:     'まばたき促進',
     start:    '開始',
     stop:     '停止',
-    instr0:   '円が<strong>縮む</strong>とき → 遠くを意識してください<br>円が<strong>広がる</strong>とき → 手前を意識してください',
+    timerLabel: '推奨 1分',
+    instr0a:  '円が<strong>縮む</strong>とき<br>→ 遠くを意識して',
+    instr0b:  '円が<strong>広がる</strong>とき<br>→ 手前を意識して',
     instr1:   '点をゆっくり目で追ってください',
     instr2:   '光が<strong>消えるタイミング</strong>でまばたきしてください',
     phaseFar:  '遠くを見てください',
@@ -500,7 +544,9 @@ const T = {
     lbl2:     'Blink Rhythm',
     start:    'Start',
     stop:     'Stop',
-    instr0:   'Circle <strong>shrinks</strong> → Focus on the horizon<br>Circle <strong>grows</strong> → Focus up close',
+    timerLabel: 'Rec. 1 min',
+    instr0a:  'Circle <strong>shrinks</strong><br>→ Focus on the horizon',
+    instr0b:  'Circle <strong>grows</strong><br>→ Focus up close',
     instr1:   'Follow the dot slowly with your eyes',
     instr2:   'Blink each time the <strong>light fades</strong>',
     phaseFar:  'Look into the distance',
@@ -522,7 +568,9 @@ const T = {
     lbl2:     'ریتم پلک زدن',
     start:    'شروع',
     stop:     'توقف',
-    instr0:   'دایره <strong>کوچک می‌شود</strong> → به دور نگاه کنید<br>دایره <strong>بزرگ می‌شود</strong> → به نزدیک نگاه کنید',
+    timerLabel: '۱ دقیقه',
+    instr0a:  'دایره <strong>کوچک می‌شود</strong><br>→ به دور نگاه کنید',
+    instr0b:  'دایره <strong>بزرگ می‌شود</strong><br>→ به نزدیک نگاه کنید',
     instr1:   'نقطه را با چشمانتان دنبال کنید',
     instr2:   'هنگامی که نور <strong>خاموش می‌شود</strong> پلک بزنید',
     phaseFar:  'به دوردست نگاه کنید',
@@ -536,10 +584,11 @@ const T = {
 };
 
 // ── State ─────────────────────────────────────────────────────────────────────
+const DURATION = 60; // fixed 1-minute exercise
 let lang      = 'ja';
 let activeTab = 0;
 let running   = false;
-let elapsed   = 0;
+let remaining = DURATION;
 let timerIv   = null;
 let eyeIv     = null;
 let phaseIv   = null;
@@ -583,7 +632,9 @@ function applyLang() {
   document.getElementById('lbl-0').textContent      = t.lbl0;
   document.getElementById('lbl-1').textContent      = t.lbl1;
   document.getElementById('lbl-2').textContent      = t.lbl2;
-  document.getElementById('instr-0').innerHTML      = t.instr0;
+  document.getElementById('instr-0a').innerHTML     = t.instr0a;
+  document.getElementById('instr-0b').innerHTML     = t.instr0b;
+  document.getElementById('timer-label').textContent = t.timerLabel;
   document.getElementById('instr-1').textContent    = t.instr1;
   document.getElementById('instr-2').innerHTML      = t.instr2;
   document.getElementById('blink-word').textContent = t.blinkWord;
@@ -639,15 +690,16 @@ document.getElementById('start-btn').addEventListener('click', () => {
 
 function startEx() {
   running = true;
-  elapsed = 0;
-  document.getElementById('elapsed').textContent = fmtTime(0);
+  remaining = DURATION;
+  document.getElementById('elapsed').textContent = fmtTime(remaining);
   const btn = document.getElementById('start-btn');
   btn.textContent = T[lang].stop;
   btn.classList.add('on');
 
   timerIv = setInterval(() => {
-    elapsed++;
-    document.getElementById('elapsed').textContent = fmtTime(elapsed);
+    remaining--;
+    document.getElementById('elapsed').textContent = fmtTime(remaining);
+    if (remaining <= 0) stopEx();
   }, 1000);
 
   if (activeTab === 0) startDist();
@@ -680,6 +732,8 @@ function stopEx() {
   document.getElementById('blink-orb').classList.remove('running');
   document.getElementById('blink-word').classList.remove('running');
   document.getElementById('blink-progress').style.strokeDashoffset = '490';
+  remaining = DURATION;
+  document.getElementById('elapsed').textContent = fmtTime(remaining);
 }
 
 // ── Ex 0 : Distance ───────────────────────────────────────────────────────────
